@@ -42,10 +42,8 @@ function renderLayout($content) {
 <body>
     <div class="nav-center">
         <form class="nav" onsubmit="return false;">
-            <button type="button" onclick="window.location.href='/'"
-                style="margin-right:18px;padding:4px 14px;font-size:16px;">Головна</button>
-            <button type="button" onclick="window.location.href='/lr1/demo/index.php'"
-                style="margin-right:18px;padding:4px 14px;font-size:16px;">Демо</button>
+            <button type="button" onclick="window.location.href='/'" class="nav-button">Головна</button>
+            <button type="button" onclick="window.location.href='/lr1/demo/index.php'" class="nav-button">Демо</button>
             <label for="task-select">Завдання:</label>
             <select id="task-select" onchange="if(this.value)window.location.href=this.value;">
                 <?php foreach ($tasks as $file => $name): ?>
@@ -54,7 +52,7 @@ function renderLayout($content) {
             </select>
         </form>
     </div>
-    <div style="max-width:900px;margin:0 auto;">
+    <div class="content-wrapper">
         <?= $content ?>
     </div>
 </body>

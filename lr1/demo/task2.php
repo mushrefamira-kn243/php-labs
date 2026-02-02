@@ -11,6 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Завдання 2 — Вірш</title>
+    <link rel="stylesheet" href="demo.css">
     <style>
     body {
         font-family: Georgia, serif;
@@ -31,9 +32,9 @@
 </head>
 
 <body>
-    <div style="margin-bottom:24px"><button onclick="window.location.href='index.php'"
-            style="padding:6px 18px;font-size:16px;border-radius:8px;background:#6366f1;color:#fff;border:none;cursor:pointer;">←
-            До демо</button></div>
+    <div class="back-button-container">
+        <button onclick="window.location.href='index.php'" class="back-button">← До демо</button>
+    </div>
     <div class="poem">
         <?php
         echo "<p>Полину в мріях в купель океану,</p>";

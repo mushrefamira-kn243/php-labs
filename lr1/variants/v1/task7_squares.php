@@ -16,20 +16,14 @@ $circles = generateRandomCircles($n);
 ob_start();
 ?>
 <?= $circles ?>
-<div class="func"
-    style="position:fixed;top:20px;left:20px;color:white;font-family:monospace;font-size:14px;background:rgba(0,0,0,0.3);padding:10px 15px;border-radius:8px;">
-    generateRandomCircles(<?= $n ?>)</div>
-<div class="counter"
-    style="position:fixed;top:20px;right:20px;color:white;font-family:Arial,sans-serif;font-size:18px;background:rgba(0,0,0,0.3);padding:10px 20px;border-radius:8px;">
-    🟡 Кіл: <?= $n ?></div>
-<p class="info"
-    style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.7);font-family:Arial,sans-serif;font-size:14px;text-align:center;">
-    Наведіть курсор на коло для анімації. Оновіть сторінку для нової композиції.</p>
+<div class="circles-func">generateRandomCircles(<?= $n ?>)</div>
+<div class="circles-counter">🟡 Кіл: <?= $n ?></div>
+<p class="circles-info">Наведіть курсор на коло для анімації. Оновіть сторінку для нової композиції.</p>
 <?php
 $content = ob_get_clean();
 require __DIR__.'/layout.php';
 renderLayout(
-     '<div style="padding:40px;text-align:center;font-size:22px;max-width:600px;margin:0 auto;">
+     '<div class="not-implemented">
           <b>Завдання 7.2 не виконано</b>
      </div>'
 );
