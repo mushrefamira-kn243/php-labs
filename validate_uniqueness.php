@@ -61,6 +61,11 @@ if ($lab === 'lr1') {
     verifyMath($variants, $errors);
 }
 
+// Verify math (LR2)
+if ($lab === 'lr2') {
+    verifyMathLR2($variants, $errors);
+}
+
 // Report
 echo "\033[1m--- Results ---\033[0m\n";
 
@@ -98,6 +103,16 @@ function getVariantGroup(string $basename): string
     return 'C';
 }
 
+function getVariantSubgroup(string $basename): int
+{
+    preg_match('/v(\d+)/', $basename, $m);
+    $num = (int)($m[1] ?? 0);
+    $inGroup = (($num - 1) % 10) + 1; // 1-10 within group
+    if ($inGroup <= 3) return 1;
+    if ($inGroup <= 7) return 2;
+    return 3;
+}
+
 function parseVariant(string $content, string $lab, string $basename): array
 {
     $data = [];
@@ -107,6 +122,13 @@ function parseVariant(string $content, string $lab, string $basename): array
             $group = getVariantGroup($basename);
             $data = parseLR1($content, $group);
             $data['group'] = $group;
+            $data['subgroup'] = getVariantSubgroup($basename);
+            break;
+        case 'lr2':
+            $group = getVariantGroup($basename);
+            $data = parseLR2($content, $group, $basename);
+            $data['group'] = $group;
+            $data['subgroup'] = getVariantSubgroup($basename);
             break;
         default:
             // Generic: extract all numbers and key text blocks
@@ -148,9 +170,19 @@ function parseLR1(string $content, string $group): array
         $data['reversed'] = (int)$m[1];
     }
 
-    // Max number: "Найбільше число: 742"
+    // Max number: "Найбільше число: 742" (Sub1)
     if (preg_match('/Найбільше число:\s*(\d+)/u', $content, $m)) {
         $data['max_number'] = (int)$m[1];
+    }
+
+    // Min number: "Найменше число: 123" or "Найменше число: 057 (як число: 57)" (Sub2)
+    if (preg_match('/Найменше число:\s*(\d+)/u', $content, $m)) {
+        $data['min_number'] = (int)$m[1];
+    }
+
+    // Palindrome: "Паліндром: так" or "Паліндром: ні" (Sub3)
+    if (preg_match('/Паліндром:\s*(так|ні)/u', $content, $m)) {
+        $data['palindrome'] = $m[1];
     }
 
     // Table dimensions: "Таблиця: 4 x 5" or "таблиця: 4 x 5"
@@ -247,6 +279,55 @@ function parseLR1GroupC(string $content, array &$data): void
     }
 }
 
+function parseLR2(string $content, string $group, string $basename): array
+{
+    $data = [];
+    $subgroup = getVariantSubgroup($basename);
+
+    // Task 4: Date difference
+    if (preg_match('/Дата 1:\s*"(\d{2}-\d{2}-\d{4})"/u', $content, $m)) {
+        $data['date1'] = $m[1];
+    }
+    if (preg_match('/Дата 2:\s*"(\d{2}-\d{2}-\d{4})"/u', $content, $m)) {
+        $data['date2'] = $m[1];
+    }
+    if (preg_match('/Очікуваний результат:\s*(\d+)\s*днів/u', $content, $m)) {
+        $data['days'] = (int)$m[1];
+    }
+
+    // Sub2: weeks + remainder
+    if (preg_match('/(\d+)\s*тижнів?\s*і\s*(\d+)\s*днів/u', $content, $m)) {
+        $data['weeks'] = (int)$m[1];
+        $data['remainder_days'] = (int)$m[2];
+    }
+
+    // Sub3: weekdays
+    if (preg_match('/Дні тижня:\s*(.+)/u', $content, $m)) {
+        $data['weekdays'] = trim($m[1]);
+    }
+
+    // Task 5: Password
+    if (preg_match('/Довжина пароля:\s*(\d+)/u', $content, $m)) {
+        $data['password_length'] = (int)$m[1];
+    }
+
+    // Sub2: generate 3 mode
+    $data['password_mode'] = 'single';
+    if (preg_match('/згенерувати 3 паролі/u', $content)) {
+        $data['password_mode'] = 'best_of_3';
+    }
+    if (preg_match('/не повинен містити підрядок логіну/u', $content)) {
+        $data['password_mode'] = 'no_login';
+    }
+
+    // Task 10: Login
+    if (preg_match('/Логін для прикладу:\s*"([^"]+)"/u', $content, $m)) {
+        $data['login'] = $m[1];
+    }
+
+    return $data;
+}
+
 function parseGeneric(string $content): array
 {
     $data = [];
@@ -300,13 +381,20 @@ function checkUniqueness(array $variants, array &$errors, array &$warnings, bool
             }
         } else {
             // Fields that are allowed to repeat (derived or limited range)
-            $warnFields = ['month', 'digit_sum', 'reversed', 'max_number', 'shapes', 'commission'];
+            $warnFields = ['month', 'digit_sum', 'reversed', 'max_number', 'min_number', 'palindrome', 'shapes', 'commission', 'subgroup', 'password_mode', 'weeks', 'remainder_days', 'password_length', 'days', 'date1', 'date2'];
             if (in_array($field, $warnFields)) {
                 $reason = match ($field) {
                     'month' => 'only 12 months',
-                    'digit_sum', 'reversed', 'max_number' => 'derived from number',
+                    'digit_sum', 'reversed', 'max_number', 'min_number' => 'derived from number',
+                    'palindrome' => 'binary value (так/ні)',
                     'shapes' => 'limited range',
                     'commission' => 'limited range of reasonable values',
+                    'subgroup' => 'only 3 subgroups',
+                    'password_mode' => 'only 3 modes',
+                    'weeks', 'remainder_days' => 'derived from days',
+                    'password_length' => 'limited range (8-20)',
+                    'days' => 'derived from dates',
+                    'date1', 'date2' => 'dates can overlap across groups',
                 };
                 $warnings[] = "{$field}: {$uniqueCount}/{$totalCount} unique ({$reason})";
                 echo "  \033[33m⚠\033[0m {$field}: {$uniqueCount}/{$totalCount} unique (OK — {$reason})\n";
@@ -389,12 +477,26 @@ function verifyMath(array $variants, array &$errors): void
                 $issues[] = "reversed: expected {$expectedReversed}, file says {$data['reversed']}";
             }
 
-            // Max arrangement
+            // Max arrangement (Sub1)
             $digits = [$d1, $d2, $d3];
             rsort($digits);
             $expectedMax = $digits[0] * 100 + $digits[1] * 10 + $digits[2];
             if (isset($data['max_number']) && $data['max_number'] !== $expectedMax) {
                 $issues[] = "max_number: expected {$expectedMax}, file says {$data['max_number']}";
+            }
+
+            // Min arrangement (Sub2)
+            $digitsMin = [$d1, $d2, $d3];
+            sort($digitsMin);
+            $expectedMin = $digitsMin[0] * 100 + $digitsMin[1] * 10 + $digitsMin[2];
+            if (isset($data['min_number']) && $data['min_number'] !== $expectedMin) {
+                $issues[] = "min_number: expected {$expectedMin}, file says {$data['min_number']}";
+            }
+
+            // Palindrome (Sub3)
+            $expectedPalindrome = ($num === $expectedReversed) ? 'так' : 'ні';
+            if (isset($data['palindrome']) && $data['palindrome'] !== $expectedPalindrome) {
+                $issues[] = "palindrome: expected {$expectedPalindrome}, file says {$data['palindrome']}";
             }
         }
 
@@ -424,5 +526,89 @@ function verifyMath(array $variants, array &$errors): void
         $groups[$data['group'] ?? 'A']++;
     }
     echo "  Groups: A=" . $groups['A'] . " B=" . $groups['B'] . " C=" . $groups['C'] . "\n";
+    echo "\n";
+}
+
+function verifyMathLR2(array $variants, array &$errors): void
+{
+    echo "\033[1mMath verification (LR2):\033[0m\n";
+
+    $errorVariants = 0;
+
+    foreach ($variants as $name => $data) {
+        $issues = [];
+        $subgroup = $data['subgroup'] ?? 1;
+
+        // Date difference
+        if (isset($data['date1'], $data['date2'], $data['days'])) {
+            $d1 = DateTime::createFromFormat('d-m-Y', $data['date1']);
+            $d2 = DateTime::createFromFormat('d-m-Y', $data['date2']);
+            if ($d1 && $d2) {
+                $expectedDays = (int)abs($d1->diff($d2)->days);
+                if ($expectedDays !== $data['days']) {
+                    $issues[] = "days: expected {$expectedDays}, file says {$data['days']}";
+                }
+
+                // Sub2: weeks + remainder
+                if ($subgroup === 2 && isset($data['weeks'], $data['remainder_days'])) {
+                    $expectedWeeks = intdiv($data['days'], 7);
+                    $expectedRemainder = $data['days'] % 7;
+                    if ($expectedWeeks !== $data['weeks']) {
+                        $issues[] = "weeks: expected {$expectedWeeks}, file says {$data['weeks']}";
+                    }
+                    if ($expectedRemainder !== $data['remainder_days']) {
+                        $issues[] = "remainder_days: expected {$expectedRemainder}, file says {$data['remainder_days']}";
+                    }
+                }
+
+                // Sub3: weekday verification
+                if ($subgroup === 3 && isset($data['weekdays'])) {
+                    $ukDays = [1 => 'понеділок', 2 => 'вівторок', 3 => 'середа', 4 => 'четвер', 5 => "п'ятниця", 6 => 'субота', 7 => 'неділя'];
+                    $wd1 = $ukDays[(int)$d1->format('N')] ?? '?';
+                    $wd2 = $ukDays[(int)$d2->format('N')] ?? '?';
+                    $expected = "{$wd1} — {$wd2}";
+                    if ($data['weekdays'] !== $expected) {
+                        $issues[] = "weekdays: expected '{$expected}', file says '{$data['weekdays']}'";
+                    }
+                }
+            }
+        }
+
+        // Password mode per subgroup
+        $expectedMode = match ($subgroup) {
+            2 => 'best_of_3',
+            3 => 'no_login',
+            default => 'single',
+        };
+        if (isset($data['password_mode']) && $data['password_mode'] !== $expectedMode) {
+            $issues[] = "password_mode: expected {$expectedMode}, file says {$data['password_mode']}";
+        }
+
+        if (empty($issues)) {
+            $showAlways = ['v1', 'v5', 'v9', 'v11', 'v14', 'v18', 'v21', 'v24', 'v28'];
+            if (in_array($name, $showAlways)) {
+                $group = $data['group'] ?? 'A';
+                echo "  \033[32m✓\033[0m {$name} (Group {$group}, Sub{$subgroup}): all checks correct\n";
+            }
+        } else {
+            $errorVariants++;
+            $group = $data['group'] ?? 'A';
+            foreach ($issues as $issue) {
+                $errors[] = "{$name}: {$issue}";
+                echo "  \033[31m✗\033[0m {$name} (Group {$group}, Sub{$subgroup}): {$issue}\n";
+            }
+        }
+    }
+
+    $totalVariants = count($variants);
+    $passedVariants = $totalVariants - $errorVariants;
+    echo "  \033[32m✓\033[0m Math: {$passedVariants}/{$totalVariants} variants correct\n";
+
+    // Subgroup summary
+    $subs = [1 => 0, 2 => 0, 3 => 0];
+    foreach ($variants as $data) {
+        $subs[$data['subgroup'] ?? 1]++;
+    }
+    echo "  Subgroups: Sub1=" . $subs[1] . " Sub2=" . $subs[2] . " Sub3=" . $subs[3] . "\n";
     echo "\n";
 }
