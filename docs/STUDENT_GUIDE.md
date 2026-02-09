@@ -357,6 +357,19 @@ php-labs/
 
 ---
 
+## Рекомендований редактор
+
+Встановіть [Visual Studio Code](https://code.visualstudio.com/) (безкоштовний). Корисні розширення:
+
+- **PHP Intelephense** — підказки та автодоповнення для PHP
+- **GitLens** — зручна робота з Git прямо в редакторі
+
+Як відкрити проєкт: File → Open Folder → оберіть папку `php-labs`.
+
+Вбудований термінал: **Ctrl + `** (або меню Terminal → New Terminal) — тут запускаєте `php -S localhost:8000`.
+
+---
+
 ## Корисні посилання
 
 - [Налаштування середовища](../setup/README.md)

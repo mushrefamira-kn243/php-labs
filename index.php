@@ -191,11 +191,11 @@ $labs = [
                             <?php endif; ?>
 
                             <?php if ($hasVariant): ?>
-                                <a href="<?= $labDir ?>/variants/v<?= $variantNumber ?>.md">Завдання (v<?= $variantNumber ?>.md)</a>
+                                <a href="https://github.com/victorchei/php-labs/blob/main/<?= $labDir ?>/variants/v<?= $variantNumber ?>.md" target="_blank">Завдання (v<?= $variantNumber ?>.md)</a>
                             <?php endif; ?>
 
                             <?php if ($hasAssignment): ?>
-                                <a href="<?= $labDir ?>/assignment.md">Опис лаби</a>
+                                <a href="https://github.com/victorchei/php-labs/blob/main/<?= $labDir ?>/assignment.md" target="_blank">Опис лаби</a>
                             <?php endif; ?>
                         </div>
                     </div>
