@@ -60,6 +60,38 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 **"Кракозябри" в консолі:**
 Переконайтесь, що файл збережено у кодуванні **UTF-8 без BOM**.
 
+### Ручне встановлення
+
+<details>
+<summary><b>PHP (без скрипта)</b></summary>
+
+1. Завантажте PHP: [windows.php.net/download](https://windows.php.net/download/) — **VS16 x64 Thread Safe** (zip)
+2. Розпакуйте в `C:\php`
+3. Додайте `C:\php` до системної змінної **PATH**:
+   - Win + R → `sysdm.cpl` → **Додатково** → **Змінні середовища**
+   - У **Path** додайте `C:\php`
+4. Перевірте: відкрийте нове вікно PowerShell → `php -v`
+
+</details>
+
+<details>
+<summary><b>Git (без скрипта)</b></summary>
+
+1. Завантажте Git: [git-scm.com/download/win](https://git-scm.com/download/win)
+2. Встановіть з параметрами за замовчуванням
+3. Перевірте: `git --version`
+
+</details>
+
+<details>
+<summary><b>Composer (для Laravel, ЛР 6-7)</b></summary>
+
+1. Завантажте: [getcomposer.org/download](https://getcomposer.org/download/) — **Composer-Setup.exe**
+2. Встановіть (інсталятор сам знайде PHP)
+3. Перевірте: `composer -V`
+
+</details>
+
 ### Альтернативні варіанти для Windows
 
 <details>
