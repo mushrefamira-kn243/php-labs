@@ -1,23 +1,29 @@
 <?php
-$number = 639;
+/**
+ * Завдання 4: Голосний чи приголосний (switch) — українська літера
+ */
+require_once __DIR__ . '/layout.php';
 
-$hundreds = (int)($number / 100);
-$tens = (int)(($number % 100) / 10);
-$units = $number % 10;
+function isVowelOrConsonant(string $letter): string
+{
+    $l = mb_strtolower($letter, 'UTF-8');
+    $vowels = ['а','е','є','и','і','ї','о','у','ю','я'];
+    return in_array($l, $vowels, true) ? "голосна" : "приголосна";
+}
 
-$sum = $hundreds + $tens + $units;
+$letter = 'д';
+$result = isVowelOrConsonant($letter);
+$isVowel = $result === "голосна";
 
-$reversed = $units * 100 + $tens * 10 + $hundreds;
+$color = $isVowel ? "#10b981" : "#8b5cf6";
+$emoji = $isVowel ? "🔊" : "🔇";
 
-$digits = [$hundreds, $tens, $units];
-rsort($digits);  
-$max_number = $digits[0] * 100 + $digits[1] * 10 + $digits[2];
+$content = '<div class="card large'>
+    <div class="letter-display" style="color:' . $color . '">' . htmlspecialchars($letter) . '</div>' .
+    "<div class=\"letter-emoji\" style=\"color:{$color}\">{$emoji}</div>" .
+    "<div class=\"letter-result\">\n        Літера <strong>\'{$letter}\'</strong> — <span style=\"color:{$color}\">{$result}</span>\n    </div>" .
+    "<p class=\"info\">isVowelOrConsonant('{$letter}') = \"{$result}\"</p>" .
+    '</div>';
 
-$is_palindrome = ($number == $reversed) ? "так" : "ні";
-
-echo "Число: $number<br>";
-echo "1. Сума цифр: $sum<br>";
-echo "2. Зворотне число: $reversed<br>";
-echo "3. Найбільше число з цифр: $max_number<br>";
-echo "Паліндром: $is_palindrome";
+renderVariantLayout($content, 'Завдання 4', 'task5-body');
 ?>
