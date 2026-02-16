@@ -1,64 +1,65 @@
 <?php
 /**
- * Простий шаблон для локальної папки з завданнями PHP
+ * Shared layout template for LR1 Variant 30 task pages
  */
 
-function renderLayout(string $content, string $taskName, string $bodyClass = ''): void
+require_once dirname(__DIR__, 3) . '/shared/helpers/dev_reload.php';
+require_once dirname(__DIR__, 3) . '/shared/helpers/paths.php';
+
+function renderVariantLayout(string $content, string $taskName, string $bodyClass = ''): void
 {
-    // Поточний файл
     $currentTask = basename($_SERVER['SCRIPT_NAME']);
 
-    // Список твоїх завдань
-    $tasks = [
-        'index.php' => 'Завдання 1 — Форматований текст',
-        'task2.php' => 'Завдання 2 — Конвертер валют',
-        'task3.php' => 'Завдання 3 — Визначення сезону',
-        'task4.php' => 'Завдання 4 — Голосний/Приголосний',
-        'task5.php' => 'Завдання 5 — Тризначне число',
-        'task6_table.php' => 'Завдання 6.1 — Таблиця',
-        'task6_squares.php' => 'Завдання 6.2 — Квадрати',
+    $variantTasks = [
+        'task2.php' => 'Завдання 1',
+        'task3.php' => 'Завдання 2',
+        'task4.php' => 'Завдання 3',
+        'task5.php' => 'Завдання 4',
+        'task6.php' => 'Завдання 5',
+        'task7_table.php' => 'Завдання 6.1',
+        'task7_squares.php' => 'Завдання 6.2',
     ];
+
+    $demoUrl = "/lr1/demo/{$currentTask}?from=v8";
     ?>
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
     <meta charset="UTF-8">
-    <title><?= htmlspecialchars($taskName) ?></title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
-        header { background: #333; color: white; padding: 10px; display: flex; align-items: center; justify-content: space-between; }
-        header a { color: white; text-decoration: none; margin-right: 15px; }
-        header select { padding: 3px; }
-        .content-wrapper { padding: 20px; }
-        table { border-collapse: collapse; margin-bottom: 20px; }
-        td { width: 50px; height: 50px; }
-        .square-container { position: relative; width: 600px; height: 300px; background-color: black; margin-bottom: 20px; }
-        .square { position: absolute; background-color: red; }
-    </style>
+    <title><?= htmlspecialchars($taskName) ?> — Варіант 8 ЛР1</title>
+    <link rel="stylesheet" href="<?= webPath(dirname(__DIR__, 3) . '/shared/css/base.css') ?>">
+    <link rel="stylesheet" href="<?= webPath(dirname(__DIR__, 2) . '/demo/demo.css') ?>">
 </head>
-<body class="<?= htmlspecialchars($bodyClass) ?>">
 
-<header>
-    <div>
-        <a href="#">Головна</a>
-        <a href="<?= htmlspecialchars($currentTask) ?>">Поточне завдання</a>
-    </div>
-    <div>
-        <select onchange="if(this.value) location.href=this.value">
-            <?php foreach ($tasks as $file => $name): ?>
-                <option value="<?= htmlspecialchars($file) ?>" <?= $file === $currentTask ? 'selected' : '' ?>>
+<body class="body-with-header <?= htmlspecialchars($bodyClass) ?>">
+    <header class="header-fixed">
+        <div class="header-left">
+            <a href="/" class="header-btn">Головна</a>
+            <a href="index.php" class="header-btn">← Варіант 8</a>
+            <a href="<?= htmlspecialchars($demoUrl) ?>" class="header-btn header-btn-demo">Demo</a>
+        </div>
+        <div class="header-center"></div>
+        <div class="header-right">
+            <span class="header-variant-label">В-8</span>
+            <select class="header-task-select" onchange="if(this.value) location.href=this.value">
+                <?php foreach ($variantTasks as $file => $name): ?>
+                <option value="<?= htmlspecialchars($file) ?>"
+                    <?= $file === $currentTask ? 'selected' : '' ?>>
                     <?= htmlspecialchars($name) ?>
                 </option>
-            <?php endforeach; ?>
-        </select>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <?= $content ?>
     </div>
-</header>
 
-<div class="content-wrapper">
-    <?= $content ?>
-</div>
-
+    <?= devReloadScript() ?>
 </body>
+
 </html>
 <?php
 }

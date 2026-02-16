@@ -1,17 +1,47 @@
 <?php
-require_once 'layout.php';
+/**
+ * Variant 8 — Index Page (template matched to v30)
+ */
 
-ob_start(); // починаємо буферизацію контенту
+require_once dirname(__DIR__, 3) . '/shared/templates/task_cards.php';
+require_once dirname(__DIR__, 3) . '/shared/helpers/paths.php';
+
+$tasks = [
+    'task2.php' => ['name' => 'Завдання 1'],
+    'task3.php' => ['name' => 'Завдання 2'],
+    'task4.php' => ['name' => 'Завдання 3'],
+    'task5.php' => ['name' => 'Завдання 4'],
+    'task6.php' => ['name' => 'Завдання 5'],
+    'task7_table.php' => ['name' => 'Завдання 6.1'],
+    'task7_squares.php' => ['name' => 'Завдання 6.2'],
+];
+
+$demoUrl = '/lr1/demo/index.php?from=v8';
 ?>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Варіант 8 — ЛР1</title>
+    <link rel="stylesheet" href="<?= webPath(dirname(__DIR__, 3) . '/shared/css/base.css') ?>">
+    <link rel="stylesheet" href="<?= webPath(dirname(__DIR__, 2) . '/demo/demo.css') ?>">
+</head>
+<body class="index-page">
+    <header class="header-fixed">
+        <div class="header-left">
+            <a href="/" class="header-btn">Головна</a>
+        </div>
+        <div class="header-center"></div>
+        <div class="header-right">
+            Варіант 8
+        </div>
+    </header>
 
-<div style="margin-left: 30px; line-height: 1.6;">
-    Котик <b>спить</b> на теплій печі,<br>
-    За вікном мете <i>холодна</i> хуртовина,<br>
-    Бабуся вяже рукавиці,<br>
-    А в хаті пахне калина.
-</div>
+    <h1 class="index-title">
+        Варіант 8
+        <br><span class="index-subtitle">Лабораторна робота №1</span>
+    </h1>
 
-<?php
-$content = ob_get_clean(); // отримуємо весь контент
-renderLayout($content, "Завдання 1 — Форматований текст");
-?>
+    <?= renderTaskCards($tasks, true, $demoUrl) ?>
+</body>
+</html>
