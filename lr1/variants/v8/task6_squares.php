@@ -1,37 +1,29 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Завдання 6.2</title>
-    <style>
-        .square-container {
-            position: relative;
-            width: 600px;
-            height: 300px;
-            background-color: black;
-        }
-        .square {
-            position: absolute;
-            background-color: red;
-        }
-    </style>
-</head>
-<body>
 <?php
-function generateRedSquares($n) {
-    echo "<div class='square-container'>";
+/**
+ * Завдання 6.2: 9 червоних квадратів на чорному тлі (варіант 8)
+ */
+require_once __DIR__ . '/layout.php';
+
+function generateRedSquaresHtml(int $n): string
+{
+    $html = "<div style='position:relative;width:100%;height:360px;background-color:#000;overflow:hidden;'>";
     for ($i = 0; $i < $n; $i++) {
-        $size = mt_rand(20, 100);
-
-        $top = mt_rand(0, 300 - $size);
-        $left = mt_rand(0, 600 - $size);
-
-        echo "<div class='square' style='width: {$size}px; height: {$size}px; top: {$top}px; left: {$left}px;'></div>";
+        $size = 20 + $i * 10;
+        $top = mt_rand(0, 360 - $size);
+        $left = mt_rand(0, 1000 - $size);
+        $html .= "<div style='position:absolute;top:{$top}px;left:{$left}px;width:{$size}px;height:{$size}px;background:#ef4444;opacity:0.95;border-radius:4px;'></div>";
     }
-    echo "</div>";
+    $html .= "</div>";
+    return $html;
 }
 
-generateRedSquares(9);
-?>
-</body>
-</html>
+$n = 9;
+$squares = generateRedSquaresHtml($n);
+
+$content = '<div class="card">' .
+    '<h2>🟥 ' . $n . ' червоних квадратів</h2>' .
+    $squares .
+    "<div class=\"circles-counter\">Квадратів: {$n}</div>" .
+    '</div>';
+
+renderVariantLayout($content, 'Завдання 6.2', 'task7-circles-body');
