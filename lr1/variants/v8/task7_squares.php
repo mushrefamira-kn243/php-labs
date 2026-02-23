@@ -1,22 +1,29 @@
 <?php
 /**
- * Завдання 6.2: 9 червоних квадратів на чорному тлі (варіант 8)
+ * Завдання 6.2: 9 червоних квадратів на чорному тлі
  */
 require_once __DIR__ . '/layout.php';
 
 function generateRedSquaresHtml(int $n): string
 {
-    // make the drawing area larger so all squares fit reliably
-    $containerWidth = 1200;   // px (max-width)
-    $containerHeight = 600;   // px
-
-    $html = "<div style='position:relative;width:100%;max-width:{$containerWidth}px;height:{$containerHeight}px;margin:0 auto;background-color:#000;overflow:hidden;'>";
+    $html = "<div class='shapes-container shapes-container--dark'>";
 
     for ($i = 0; $i < $n; $i++) {
-        $size = 20 + $i * 10; // last square = 20 + (n-1)*10 -> for n=9 => 100px
-        $top = mt_rand(0, $containerHeight - $size);
-        $left = mt_rand(0, $containerWidth - $size);
-        $html .= "<div style='position:absolute;top:{$top}px;left:{$left}px;width:{$size}px;height:{$size}px;background:#ef4444;opacity:0.95;border-radius:4px;'></div>";
+        $size = 20 + $i * 10;
+        $top = mt_rand(5, 85);
+        $left = mt_rand(5, 85);
+        $opacity = mt_rand(70, 100) / 100;
+
+        $html .= "<div style='
+            position:absolute;
+            top:{$top}%;
+            left:{$left}%;
+            width:{$size}px;
+            height:{$size}px;
+            background-color:#ef4444;
+            opacity:{$opacity};
+            border-radius:4px;
+        '></div>";
     }
 
     $html .= "</div>";
@@ -26,10 +33,9 @@ function generateRedSquaresHtml(int $n): string
 $n = 9;
 $squares = generateRedSquaresHtml($n);
 
-$content = '<div class="card">' .
-    '<h2>🟥 ' . $n . ' червоних квадратів</h2>' .
-    $squares .
-    "<div class=\"circles-counter\">Квадратів: {$n}</div>" .
-    '</div>';
+$content = $squares . '
+    <div class="circles-func">generateRedSquaresHtml(' . $n . ')</div>
+    <div class="circles-counter">🟥 Квадратів: ' . $n . '</div>
+    <p class="circles-info">Оновіть сторінку для нової композиції 🔄</p>';
 
 renderVariantLayout($content, 'Завдання 6.2', 'task7-circles-body');
