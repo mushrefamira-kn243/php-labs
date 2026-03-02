@@ -31,7 +31,7 @@ function renderVariantLayout(string $content, string $taskName, string $bodyClas
 
 <head>
     <meta charset="UTF-8">
-    <title><?= htmlspecialchars($taskName) ?> — Варіант 30 ЛР2</title>
+    <title><?= htmlspecialchars($taskName) ?> — Варіант 30 Р2</title>
     <link rel="stylesheet" href="<?= webPath(dirname(__DIR__, 3) . '/shared/css/base.css') ?>">
     <link rel="stylesheet" href="<?= webPath(dirname(__DIR__, 2) . '/demo/demo.css') ?>">
 </head>
@@ -40,7 +40,7 @@ function renderVariantLayout(string $content, string $taskName, string $bodyClas
     <header class="header-fixed">
         <div class="header-left">
             <a href="/" class="header-btn">Головна</a>
-            <a href="index.php" class="header-btn">← Варіант 30</a>
+            <a href="index.php" class="header-btn">← Варіант 8</a>
             <a href="<?= htmlspecialchars($demoUrl) ?>" class="header-btn header-btn-demo">Demo</a>
         </div>
         <div class="header-center"></div>
