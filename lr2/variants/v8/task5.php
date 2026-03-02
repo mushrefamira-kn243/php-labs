@@ -157,4 +157,4 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-renderLayout($content, 'Завдання 5');
+renderVariantLayout($content, 'Завдання 5');
