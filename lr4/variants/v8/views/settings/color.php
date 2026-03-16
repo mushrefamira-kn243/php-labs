@@ -6,7 +6,7 @@ $messageType = $messageType ?? 'success';
 ?>
 
 <h1>Колір фону</h1>
-<p>Оберіть колір фону для кулінарного блогу. Зміна зберігається в сесії.</p>
+<p>Оберіть колір фону для музичної школи. Зміна зберігається в сесії.</p>
 
 <?php if ($message !== ''): ?>
     <div class="alert alert--<?= $messageType === 'error' ? 'error' : 'success' ?>"><?= htmlspecialchars($message) ?></div>
