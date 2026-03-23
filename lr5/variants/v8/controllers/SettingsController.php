@@ -1,51 +1,88 @@
 <?php
-session_start(); // старт сесії
 
-class SettingsController
+class SettingsController extends PageController
 {
-    // Форма вибору кольору
+    private array $colors = [
+        '#2C2C2C' => 'Рояльний чорний',
+        '#D2B48C' => 'Скрипковий коричневий',
+        '#FFFAF0' => 'Ноти на білому',
+        '#B0C4DE' => 'Джазовий синій',
+        '#FFE4B5' => 'Золотий саксофон'
+    ];
+
     public function action_color(): void
     {
-        $colors = [
-            '#2C2C2C' => 'Рояльний чорний',
-            '#D2B48C' => 'Скрипковий коричневий',
-            '#FFFAF0' => 'Ноти на білому',
-            '#B0C4DE' => 'Джазовий синій',
-            '#FFE4B5' => 'Золотий саксофон'
-        ];
+        if ($this->request->isPost()) {
+            $this->saveColor();
+            return;
+        }
 
         $currentColor = $_SESSION['bg_color'] ?? '#FFFAF0';
         $message = $_SESSION['message'] ?? '';
         $messageType = $_SESSION['message_type'] ?? 'success';
 
-        // Очищуємо повідомлення після показу
         unset($_SESSION['message'], $_SESSION['message_type']);
 
-        include __DIR__ . '/../views/settings/color.php';
+        $this->render('settings/color', [
+            'colors' => $this->colors,
+            'currentColor' => $currentColor,
+            'message' => $message,
+            'messageType' => $messageType,
+        ], 'Колір фону');
     }
 
-    // Збереження вибраного кольору
-    public function action_saveColor(): void
+    private function saveColor(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bg_color'])) {
-            $allowedColors = ['#2C2C2C', '#D2B48C', '#FFFAF0', '#B0C4DE', '#FFE4B5'];
-            $color = $_POST['bg_color'];
+        $color = $_POST['bg_color'] ?? '';
+        $allowedColors = array_keys($this->colors);
 
-            if (in_array($color, $allowedColors)) {
-                $_SESSION['bg_color'] = $color;
-                $_SESSION['message'] = "Колір успішно змінено!";
-                $_SESSION['message_type'] = 'success';
-            } else {
-                $_SESSION['message'] = "Неприпустимий колір!";
-                $_SESSION['message_type'] = 'error';
-            }
+        if (in_array($color, $allowedColors)) {
+            $_SESSION['bg_color'] = $color;
+            $_SESSION['message'] = 'Колір успішно змінено!';
+            $_SESSION['message_type'] = 'success';
         } else {
-            $_SESSION['message'] = "Не обрано колір!";
+            $_SESSION['message'] = 'Неприпустимий колір!';
             $_SESSION['message_type'] = 'error';
         }
 
-        // Редірект назад на форму
-        header('Location: index.php?route=settings/color');
-        exit;
+        $this->redirect('settings/color');
+    }
+
+    public function action_greeting(): void
+    {
+        if ($this->request->isPost()) {
+            $this->saveGreeting();
+            return;
+        }
+
+        $message = $_SESSION['message'] ?? '';
+        $messageType = $_SESSION['message_type'] ?? 'success';
+        unset($_SESSION['message'], $_SESSION['message_type']);
+
+        $this->render('settings/greeting', [
+            'currentName' => $_COOKIE['greeting_name'] ?? '',
+            'currentGender' => $_COOKIE['greeting_gender'] ?? '',
+            'message' => $message,
+            'messageType' => $messageType,
+        ], 'Привітання');
+    }
+
+    private function saveGreeting(): void
+    {
+        $name = trim($_POST['greeting_name'] ?? '');
+        $gender = $_POST['greeting_gender'] ?? '';
+
+        if ($name === '') {
+            $_SESSION['message'] = "Введіть ім'я!";
+            $_SESSION['message_type'] = 'error';
+        } else {
+            $expires = time() + 30 * 24 * 60 * 60;
+            setcookie('greeting_name', $name, $expires, '/');
+            setcookie('greeting_gender', $gender, $expires, '/');
+            $_SESSION['message'] = 'Привітання збережено!';
+            $_SESSION['message_type'] = 'success';
+        }
+
+        $this->redirect('settings/greeting');
     }
 }
