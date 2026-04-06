@@ -52,3 +52,13 @@ $navItems = [
     </header>
     <main class="main">
         <div class="container">
+            <a href="/guestbook">Гостьова книга</a>
+            <a href="/upload">Завантаження</a>
+            <a href="/directories/create">Створити папку</a>
+            <a href="/directories/delete">Видалити папку</a>
+            <a href="/instruments">Інструменти</a>
+            <a href="/auth/register">Реєстрація</a>
+            <a href="/auth/login">Вхід</a>
+        </div>
+    </main>
+</html>

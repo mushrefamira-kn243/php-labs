@@ -85,4 +85,19 @@ class SettingsController extends PageController
 
         $this->redirect('settings/greeting');
     }
+
+    public function color() {
+        $colors = [
+            'nocturne_blue' => '#191970',
+            'classic_ivory' => '#FFFFF0',
+            'royal_black' => '#1A1A2E',
+            'gold_notes' => '#DAA520',
+            'chord_lavender' => '#9370DB'
+        ];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $_SESSION['bg_color'] = $colors[$_POST['color']];
+            header('Location: /settings/color');
+        }
+        $this->view->render('settings/color', ['colors' => $colors]);
+    }
 }
