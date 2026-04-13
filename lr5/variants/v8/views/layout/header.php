@@ -9,12 +9,17 @@ if ($greetingName !== '') {
     $greetingText = "Вітаємо Вас, {$title} " . htmlspecialchars($greetingName) . "!";
 }
 
+$isLoggedIn = isset($_SESSION['user_id']);
+$userLogin = $_SESSION['user_login'] ?? '';
+
 $currentRoute = $_GET['route'] ?? 'index/main';
 
 $navItems = [
     'index/main' => 'Головна',
-    'regform/form' => 'Реєстрація',
-    'reqview/showrequest' => 'Параметри запиту',
+    'guestbook/index' => 'Гостьова книга',
+    'upload/index' => 'Завантаження',
+    'folder/create' => 'Каталоги',
+    'recipe/list' => 'Інструменти',
     'settings/color' => 'Колір фону',
     'settings/greeting' => 'Привітання',
 ];
@@ -35,6 +40,15 @@ $navItems = [
                 <?php if ($greetingText !== ''): ?>
                     <span class="header__greeting"><?= $greetingText ?></span>
                 <?php endif; ?>
+                <div class="header__auth">
+                    <?php if ($isLoggedIn): ?>
+                        <a href="index.php?route=auth/profile" class="header__auth-link"><?= htmlspecialchars($userLogin) ?></a>
+                        <a href="index.php?route=auth/logout" class="header__auth-link header__auth-link--logout">Вийти</a>
+                    <?php else: ?>
+                        <a href="index.php?route=auth/login" class="header__auth-link">Увійти</a>
+                        <a href="index.php?route=auth/register" class="header__auth-link">Реєстрація</a>
+                    <?php endif; ?>
+                </div>
             </div>
             <nav class="nav">
                 <ul class="nav__list">

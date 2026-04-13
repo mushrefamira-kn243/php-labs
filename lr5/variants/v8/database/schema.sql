@@ -21,3 +21,16 @@ CREATE TABLE IF NOT EXISTS instruments (
     condition VARCHAR(30),
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Seed instruments
+INSERT INTO instruments (name, type, brand, price, condition) VALUES
+    ('Фортепіано Steinway & Sons Model D', 'струнний', 'Steinway & Sons', 150000.00, 'новий'),
+    ('Скрипка Stradivarius', 'струнний', 'Antonio Stradivari', 50000.00, 'відмінний'),
+    ('Труба Bach', 'духовий', 'Bach', 2500.00, 'новий'),
+    ('Барабани Pearl', 'ударний', 'Pearl', 8000.00, 'б/в'),
+    ('Гітара Gibson Les Paul', 'струнний', 'Gibson', 12000.00, 'відмінний'),
+    ('Флейта Yamaha', 'духовий', 'Yamaha', 1500.00, 'новий'),
+    ('Кларнет Buffet Crampon', 'духовий', 'Buffet Crampon', 3000.00, 'новий'),
+    ('Бас-гітара Fender Precision', 'струнний', 'Fender', 2500.00, 'б/в'),
+    ('Саксофон Selmer', 'духовий', 'Selmer', 4500.00, 'відмінний'),
+    ('Ксилофон Adams', 'ударний', 'Adams', 2000.00, 'новий');

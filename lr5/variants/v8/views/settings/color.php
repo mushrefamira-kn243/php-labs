@@ -31,4 +31,18 @@ $error = $error ?? '';
     <button type="submit" class="btn">Зберегти</button>
 </form>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const radios = document.querySelectorAll('input[name="bg_color"]');
+    const swatches = document.querySelectorAll('.color-swatch');
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            swatches.forEach(swatch => swatch.classList.remove('color-swatch--active'));
+            this.closest('.color-swatch').classList.add('color-swatch--active');
+        });
+    });
+});
+</script>
+
 <p class="text-muted text-muted--mt">Також доступне <a href="index.php?route=settings/greeting">налаштування привітання</a>.</p>
