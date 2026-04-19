@@ -17,7 +17,7 @@ class RecipeController extends PageController
 
         $this->render('recipe/list', [
             'instruments' => $instruments,
-        ], 'Інструменти');
+        ], 'Програма навчання');
     }
 
     public function action_create(): void

@@ -16,6 +16,9 @@ class FolderController extends PageController
 
     public function action_create(): void
     {
+        header('Location: index.php?route=index/main');
+        exit;
+
         $message = '';
         $error = '';
 
@@ -66,6 +69,9 @@ class FolderController extends PageController
 
     public function action_delete(): void
     {
+        header('Location: index.php?route=index/main');
+        exit;
+
         $message = '';
         $error = '';
 

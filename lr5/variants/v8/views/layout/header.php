@@ -1,7 +1,61 @@
 <?php
-$bgColor = $_SESSION['bg_color'] ?? '#FFFAF0';
+$bgColor = $_SESSION['bg_color'] ?? '#FFFFF0';
 $greetingName = is_string($_COOKIE['greeting_name'] ?? '') ? ($_COOKIE['greeting_name'] ?? '') : '';
 $greetingGender = is_string($_COOKIE['greeting_gender'] ?? '') ? ($_COOKIE['greeting_gender'] ?? '') : '';
+
+$themes = [
+    '#191970' => [
+        '--bg' => '#191970',
+        '--surface' => '#ffffff',
+        '--surface-soft' => '#eff6ff',
+        '--text' => '#0f172a',
+        '--muted' => '#475569',
+        '--accent' => '#7c3aed',
+        '--accent-soft' => '#ede9fe',
+    ],
+    '#FFFFF0' => [
+        '--bg' => '#fffff0',
+        '--surface' => '#ffffff',
+        '--surface-soft' => '#f8fafc',
+        '--text' => '#111827',
+        '--muted' => '#475569',
+        '--accent' => '#2563eb',
+        '--accent-soft' => '#dbeafe',
+    ],
+    '#1A1A2E' => [
+        '--bg' => '#1a1a2e',
+        '--surface' => '#ffffff',
+        '--surface-soft' => '#eff6ff',
+        '--text' => '#111827',
+        '--muted' => '#475569',
+        '--accent' => '#7c3aed',
+        '--accent-soft' => '#ede9fe',
+    ],
+    '#DAA520' => [
+        '--bg' => '#daa520',
+        '--surface' => '#ffffff',
+        '--surface-soft' => '#fef7e0',
+        '--text' => '#111827',
+        '--muted' => '#475569',
+        '--accent' => '#1d4ed8',
+        '--accent-soft' => '#dbeafe',
+    ],
+    '#9370DB' => [
+        '--bg' => '#9370db',
+        '--surface' => '#ffffff',
+        '--surface-soft' => '#f3e8ff',
+        '--text' => '#111827',
+        '--muted' => '#475569',
+        '--accent' => '#4f46e5',
+        '--accent-soft' => '#ede9fe',
+    ],
+];
+
+$theme = $themes[$bgColor] ?? $themes['#FFFFF0'];
+$themeStyle = '';
+foreach ($theme as $name => $value) {
+    $themeStyle .= "{$name}:{$value};";
+}
 
 $greetingText = '';
 if ($greetingName !== '') {
@@ -18,10 +72,9 @@ $navItems = [
     'index/main' => 'Головна',
     'guestbook/index' => 'Гостьова книга',
     'upload/index' => 'Завантаження',
-    'folder/create' => 'Каталоги',
-    'recipe/list' => 'Інструменти',
-    'settings/color' => 'Колір фону',
-    'settings/greeting' => 'Привітання',
+    'regform/form' => 'Запис',
+    'recipe/list' => 'Програма',
+    'settings/index' => 'Налаштування',
 ];
 ?>
 <!DOCTYPE html>
@@ -32,7 +85,7 @@ $navItems = [
     <title><?= htmlspecialchars(($pageTitle ?? '') !== '' ? $pageTitle : 'Музична школа') ?> — Музична школа</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body style="background-color: <?= htmlspecialchars($bgColor) ?>">
+<body style="<?= htmlspecialchars($themeStyle) ?>">
     <header class="header">
         <div class="container">
             <div class="header__inner">
